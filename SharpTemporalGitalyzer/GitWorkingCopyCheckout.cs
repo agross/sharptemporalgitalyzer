@@ -20,7 +20,7 @@ namespace Seabites.SharpTemporalGitalyzer {
       }
       var startInfo = new ProcessStartInfo(
         _gitPath,
-        string.Format("checkout {0}", commit.Hash)) {
+        string.Format("checkout --force {0}", commit.Hash)) {
                                                       RedirectStandardOutput = true,
                                                       WindowStyle = ProcessWindowStyle.Hidden,
                                                       UseShellExecute = false,
