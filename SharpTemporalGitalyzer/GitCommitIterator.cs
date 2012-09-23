@@ -20,19 +20,36 @@ namespace Seabites.SharpTemporalGitalyzer {
       if (!fileRepositoryDirectory.GetDirectories(".git").Any()) {
         throw new ArgumentException("The file repository path does not seem to contain a .git folder.", "fileRepositoryPath");
       }
-      var startInfo = new ProcessStartInfo(
-          _gitPath,
-          "log --pretty=format:\"%H|%ci|%cn\" --branches=master --reverse") {
-                                                                            RedirectStandardOutput = true,
-                                                                            WindowStyle = ProcessWindowStyle.Hidden,
-                                                                            UseShellExecute = false,
-                                                                            WorkingDirectory = fileRepositoryPath
-                                                                          };
+      
+      return Commits(fileRepositoryPath, "log --pretty=format:\"%H|%ci|%cn\" --branches=master --reverse");
+    }
+
+    public Commit GetHeadCommit(string fileRepositoryPath) {
+      if (fileRepositoryPath == null) throw new ArgumentNullException("fileRepositoryPath");
+      var fileRepositoryDirectory = new DirectoryInfo(fileRepositoryPath);
+      if (!fileRepositoryDirectory.GetDirectories(".git").Any()) {
+        throw new ArgumentException("The file repository path does not seem to contain a .git folder.", "fileRepositoryPath");
+      }
+
+      return Commits(fileRepositoryPath, "log -1 --pretty=format:\"%H|%ci|%cn\" --branches=master").Single();
+    }
+
+    IEnumerable<Commit> Commits(string fileRepositoryPath, string gitCommand)
+    {
+      var startInfo = new ProcessStartInfo(_gitPath, gitCommand)
+      {
+        RedirectStandardOutput = true,
+        WindowStyle = ProcessWindowStyle.Hidden,
+        UseShellExecute = false,
+        WorkingDirectory = fileRepositoryPath
+      };
       var commits = new List<Commit>();
-      using(var process = Process.Start(startInfo)) {
+      using (var process = Process.Start(startInfo))
+      {
         string logLine;
         var index = InitialIndex;
-        while((logLine = process.StandardOutput.ReadLine()) != null) {
+        while ((logLine = process.StandardOutput.ReadLine()) != null)
+        {
           var data = logLine.Split('|');
           commits.Add(new Commit(index, data[0], data[1], data[2]));
           index++;
