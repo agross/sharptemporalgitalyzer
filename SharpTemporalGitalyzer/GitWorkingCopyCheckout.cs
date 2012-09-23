@@ -19,8 +19,7 @@ namespace Seabites.SharpTemporalGitalyzer {
         throw new ArgumentException("The working copy path does not seem to contain a .git folder.", "workingCopyPath");
       }
       var startInfo = new ProcessStartInfo(
-        string.Format(
-          "{0}\\git.cmd", _gitPath),
+        _gitPath,
         string.Format("checkout {0}", commit.Hash)) {
                                                       RedirectStandardOutput = true,
                                                       WindowStyle = ProcessWindowStyle.Hidden,

@@ -21,8 +21,7 @@ namespace Seabites.SharpTemporalGitalyzer {
         throw new ArgumentException("The file repository path does not seem to contain a .git folder.", "fileRepositoryPath");
       }
       var startInfo = new ProcessStartInfo(
-        string.Format(
-          "{0}\\git.cmd", _gitPath),
+          _gitPath,
           "log --pretty=format:\"%H|%ci|%cn\" --branches=master --reverse") {
                                                                             RedirectStandardOutput = true,
                                                                             WindowStyle = ProcessWindowStyle.Hidden,
